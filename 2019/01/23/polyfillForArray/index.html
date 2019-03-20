@@ -94,13 +94,13 @@
 <meta property="og:site_name" content="张勇的博客">
 <meta property="og:description" content="Array中的polyfill，用ES5实现方法大同小异，实现方法还是比较简单，这里主要解释MDN中给出polyfill的难点。 一、forEach这里主要用forEach做介绍，其它的方法大部分相同，如：map，some，every，find，都是接受一个callback和thisArg作为参数，所有的polyfill都应该先判断浏览器是否支持，这里省略了判断代码： 123if (!Array.">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://444263854.github.io/2019/01/23/images/polyfillForArray/1.jpg">
-<meta property="og:image" content="https://444263854.github.io/2019/01/23/images/polyfillForArray/2.jpg">
+<meta property="og:image" content="https://444263854.github.io/2019/01/23/polyfillForArray/1.jpg">
+<meta property="og:image" content="https://444263854.github.io/2019/01/23/polyfillForArray/2.jpg">
 <meta property="og:updated_time" content="2019-01-23T07:10:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ES6中Array内置方法的polyfill剖析">
 <meta name="twitter:description" content="Array中的polyfill，用ES5实现方法大同小异，实现方法还是比较简单，这里主要解释MDN中给出polyfill的难点。 一、forEach这里主要用forEach做介绍，其它的方法大部分相同，如：map，some，every，find，都是接受一个callback和thisArg作为参数，所有的polyfill都应该先判断浏览器是否支持，这里省略了判断代码： 123if (!Array.">
-<meta name="twitter:image" content="https://444263854.github.io/2019/01/23/images/polyfillForArray/1.jpg">
+<meta name="twitter:image" content="https://444263854.github.io/2019/01/23/polyfillForArray/1.jpg">
 
 
 
@@ -448,10 +448,10 @@
 <p>我们来看这行：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> O = <span class="built_in">Object</span>(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
 <p>很是不解，为什么要这样做，然后发现如果是数组，并没有什么变化：</p>
-<p><img src="../images/polyfillForArray/1.jpg" alt=""></p>
+<p><img src="/2019/01/23/polyfillForArray/1.jpg" alt=""></p>
 <p>但是，forEach并不只是给数组调用的，也可以给其它<strong>类数组对象</strong>或者<strong>基本类型</strong>调用，例如：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Array</span>.prototype.forEach.call(<span class="string">"123"</span>);</span><br><span class="line"><span class="built_in">Array</span>.prototype.forEach.call(<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
-<p><img src="../images/polyfillForArray/2.jpg" alt=""></p>
+<p><img src="/2019/01/23/polyfillForArray/2.jpg" alt=""></p>
 <p>把其他非Object类型转为Object，这样就可以给<strong>字符串</strong>应用该方法，那其它原始类型呢？</p>
 <p>其他原始类型会被过滤，同时避免了抛出错误，因为while循环用到了<strong>in</strong>操作符，同时，<strong>稀疏数组或类数组中的空元素</strong>也会跳过：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (len &gt; k) &#123;</span><br><span class="line">    <span class="comment">//稀疏数组 [1,2,empty,4] 会跳过 empty</span></span><br><span class="line">    <span class="comment">//类数组对象的空元素:&#123;0:"0",2:"2"&#125;,不存在 1:"1"</span></span><br><span class="line">    <span class="keyword">if</span> (k <span class="keyword">in</span> O) &#123;</span><br><span class="line">       callback.call(self, O[k], k, O);</span><br><span class="line">    &#125;</span><br><span class="line">    k++;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
